@@ -33,6 +33,7 @@ formContainer.append(searchForm);
 
 const searchInput = document.querySelector('input[name="searchQuery"]');
 searchInput.style.width = '250px';
+searchInput.style.paddingRight = '30px';
 
 const searchBtn = document.querySelector('button[type="submit"]');
 searchBtn.textContent = '';
@@ -41,6 +42,7 @@ icon.className = 'fa fa-search';
 searchBtn.append(icon);
 searchBtn.style.position = 'absolute';
 searchBtn.style.right = '0';
+searchBtn.style.borderColor = 'none';
 searchBtn.style.cursor = 'pointer';
 
 const loadMoreBtn = document.querySelector('.load-more');
