@@ -5,7 +5,6 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 
 const apiKey = '9318257-96b567a3bb5708a16f509a99b';
-//axios.defaults.headers.common['x-api-key'] = apiKey;
 
 const body = document.querySelector('body');
 body.style.fontFamily = 'Verdana';
@@ -14,19 +13,23 @@ body.style.display = 'flex';
 body.style.flexDirection = 'column';
 body.style.alignItems = 'center';
 
-const titleElement = document.createElement('h1');
-titleElement.textContent = 'Image Search App';
-titleElement.style.fontWeight = 'bold';
-titleElement.style.textAlign = 'center';
-titleElement.style.marginTop = '20px';
-body.prepend(titleElement);
-
 const searchForm = document.getElementById('search-form');
 searchForm.style.display = 'inline-block';
 searchForm.style.position = 'relative';
 searchForm.style.paddingTop = '15px';
 searchForm.style.paddingBottom = '15px';
 searchForm.style.background = '#007fff';
+
+const formContainer = document.createElement('div');
+formContainer.classList.add('form-container');
+formContainer.style.background = '#007fff';
+formContainer.style.width = '100%';
+formContainer.style.display = 'flex';
+formContainer.style.justifyContent = 'center';
+formContainer.style.position = 'fixed';
+formContainer.style.top = '0';
+searchForm.before(formContainer);
+formContainer.append(searchForm);
 
 const searchInput = document.querySelector('input[name="searchQuery"]');
 searchInput.style.width = '250px';
@@ -38,10 +41,24 @@ icon.className = 'fa fa-search';
 searchBtn.append(icon);
 searchBtn.style.position = 'absolute';
 searchBtn.style.right = '0';
+searchBtn.style.cursor = 'pointer';
 
 const loadMoreBtn = document.querySelector('.load-more');
 loadMoreBtn.style.display = 'none';
 loadMoreBtn.style.textAlign = 'center';
+loadMoreBtn.style.textTransform = 'uppercase';
+loadMoreBtn.style.color = 'white';
+loadMoreBtn.style.backgroundColor = '#007fff';
+loadMoreBtn.style.padding = '10px 20px';
+loadMoreBtn.style.margin = '0 auto 30px';
+loadMoreBtn.style.border = 'none';
+loadMoreBtn.style.cursor = 'pointer';
+loadMoreBtn.addEventListener('mouseenter', function () {
+  loadMoreBtn.style.backgroundColor = '#1466b8';
+});
+loadMoreBtn.addEventListener('mouseleave', function () {
+  loadMoreBtn.style.backgroundColor = '#007fff';
+});
 
 const gallery = document.querySelector('.gallery');
 gallery.style.listStyle = 'none';
@@ -51,6 +68,9 @@ gallery.style.justifyContent = 'center';
 gallery.style.flexWrap = 'wrap';
 gallery.style.gap = '20px';
 gallery.style.width = '1600px';
+gallery.style.marginTop = '65px';
+gallery.style.marginBottom = '30px';
+gallery.style.paddingLeft = '0';
 
 let page = 1;
 
@@ -126,6 +146,7 @@ const adjustImageCards = () => {
     item.style.display = 'flex';
     item.style.fontSize = '12px';
     item.style.justifyContent = 'space-around';
+    item.style.textAlign = 'center';
   });
 };
 
@@ -151,12 +172,22 @@ const fetchImages = async () => {
       Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     }
     data.hits.forEach(createImageCard);
+
     adjustImageCards();
 
     const lightbox = new SimpleLightbox('.gallery a');
     lightbox.refresh();
 
-    //console.log(page);
+    if (page !== 1) {
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2.03,
+        behavior: 'smooth',
+      });
+    }
 
     if (data.totalHits <= page * 40) {
       loadMoreBtn.style.display = 'none';
