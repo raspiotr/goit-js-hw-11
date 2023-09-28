@@ -73,17 +73,8 @@ gallery.style.marginTop = '65px';
 gallery.style.marginBottom = '30px';
 gallery.style.paddingLeft = '0';
 
-let page;
-const apiKey = '9318257-96b567a3bb5708a16f509a99b';
-const searchParams = new URLSearchParams({
-  key: apiKey,
-  q: '',
-  image_type: 'photo',
-  orientation: 'horizontal',
-  safesearch: true,
-  per_page: 40,
-  page,
-});
+let page = 1;
+let searchQuery = '';
 
 const createImageCard = image => {
   const card = document.createElement('li');
@@ -153,7 +144,7 @@ const adjustImageCards = () => {
 
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
-  const searchQuery = searchInput.value;
+  searchQuery = searchInput.value;
   console.log(searchQuery);
 
   if (searchQuery === '') {
@@ -161,14 +152,12 @@ searchForm.addEventListener('submit', async event => {
     return;
   }
 
-  searchParams.set('q', searchQuery);
   page = 1;
   gallery.innerHTML = '';
   loadMoreBtn.style.display = 'none';
   console.log(page);
-  searchParams.set('page', page);
 
-  const data = await fetchImages(searchParams);
+  const data = await fetchImages(page, searchQuery);
 
   if (data.hits.length === 0) {
     Notiflix.Notify.warning(
@@ -199,8 +188,7 @@ searchForm.addEventListener('submit', async event => {
 
 loadMoreBtn.addEventListener('click', async () => {
   console.log(page);
-  searchParams.set('page', page);
-  const data = await fetchImages(searchParams);
+  const data = await fetchImages(page, searchQuery);
 
   data.hits.forEach(createImageCard);
   adjustImageCards();
